@@ -93,7 +93,7 @@ class PublicationServiceTest {
 
         LiteratureRepository repository = mock(LiteratureRepository.class);
         LiteratureDocument docForMappedAccession =
-                UniprotKBObjectsForTests.getLiteratureDocument(10L, "P12345");
+                UniprotKBObjectsForTests.getLiteratureDocument(10L);
         when(repository.getAll(argThat(queryContains("mapped_protein"))))
                 .thenAnswer(invocation -> Stream.of(docForMappedAccession));
 
@@ -136,7 +136,7 @@ class PublicationServiceTest {
                 .thenAnswer(invocation -> Stream.of(docForUninprotEntry200));
 
         LiteratureDocument docForMappedAccession =
-                UniprotKBObjectsForTests.getLiteratureDocument(10L, "P12345");
+                UniprotKBObjectsForTests.getLiteratureDocument(10L);
         when(repository.getAll(argThat(queryContains("mapped_protein"))))
                 .thenAnswer(invocation -> Stream.of(docForMappedAccession));
 
@@ -273,13 +273,13 @@ class PublicationServiceTest {
 
     private LiteratureRepository getMockedPaginationRepository() {
         LiteratureRepository repository = mock(LiteratureRepository.class);
-        LiteratureDocument d1 = UniprotKBObjectsForTests.getLiteratureDocument(10L, "P12345");
-        LiteratureDocument d2 = UniprotKBObjectsForTests.getLiteratureDocument(20L, "P12345");
-        LiteratureDocument d3 = UniprotKBObjectsForTests.getLiteratureDocument(30L, "P12345");
-        LiteratureDocument d4 = UniprotKBObjectsForTests.getLiteratureDocument(40L, "P12345");
-        LiteratureDocument d5 = UniprotKBObjectsForTests.getLiteratureDocument(50L, "P12345");
-        LiteratureDocument d6 = UniprotKBObjectsForTests.getLiteratureDocument(60L, "P12345");
-        LiteratureDocument d7 = UniprotKBObjectsForTests.getLiteratureDocument(70L, "P12345");
+        LiteratureDocument d1 = UniprotKBObjectsForTests.getLiteratureDocument(10L);
+        LiteratureDocument d2 = UniprotKBObjectsForTests.getLiteratureDocument(20L);
+        LiteratureDocument d3 = UniprotKBObjectsForTests.getLiteratureDocument(30L);
+        LiteratureDocument d4 = UniprotKBObjectsForTests.getLiteratureDocument(40L);
+        LiteratureDocument d5 = UniprotKBObjectsForTests.getLiteratureDocument(50L);
+        LiteratureDocument d6 = UniprotKBObjectsForTests.getLiteratureDocument(60L);
+        LiteratureDocument d7 = UniprotKBObjectsForTests.getLiteratureDocument(70L);
         when(repository.getAll(argThat(queryContains("mapped_protein"))))
                 .thenAnswer(invocation -> Stream.of(d1, d2, d3, d4, d5, d6, d7));
         return repository;

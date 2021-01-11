@@ -33,7 +33,8 @@ public class PublicationEntry {
         if (hasStatistics()) {
             LiteratureStatistics stat = getStatistics();
             long referencedProteins =
-                    stat.getMappedProteinCount()
+                    stat.getComputationallyMappedProteinCount()
+                            + stat.getCommunityMappedProteinCount()
                             + stat.getReviewedProteinCount()
                             + stat.getUnreviewedProteinCount();
             if (referencedProteins > 50) {

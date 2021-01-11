@@ -1,6 +1,11 @@
 package org.uniprot.api.uniprotkb.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,7 +31,6 @@ import org.uniprot.core.citation.CitationDatabase;
 import org.uniprot.core.citation.Literature;
 import org.uniprot.core.literature.LiteratureEntry;
 import org.uniprot.core.literature.LiteratureMappedReference;
-import org.uniprot.core.literature.LiteratureStoreEntry;
 import org.uniprot.core.uniprotkb.UniProtKBEntry;
 import org.uniprot.core.uniprotkb.UniProtKBReference;
 import org.uniprot.core.uniprotkb.impl.UniProtKBReferenceBuilder;
@@ -72,7 +76,8 @@ public class PublicationService {
         // desc&facet.field=categories&facet.field=types
         // for each doc i $docs
         //   construct publication entry object from $doc
-        //   hmmm, how do we get publication title -- call literature service -- but could change this in future
+        //   hmmm, how do we get publication title -- call literature service -- but could change
+        // this in future
         //   and store it in the publicationdocument binary
 
         // LOAD THE DATA
@@ -142,7 +147,7 @@ public class PublicationService {
         Stream<LiteratureDocument> literatures = repository.getAll(solrRequest);
         return literatures
                 .map(entryStoreConverter)
-                .map(LiteratureStoreEntry::getLiteratureEntry)
+                //                .map(LiteratureStoreEntry::getLiteratureEntry)
                 .collect(Collectors.toMap(this::getPubmedIdFromEntry, Function.identity()));
     }
 
@@ -216,43 +221,44 @@ public class PublicationService {
 
     private PublicationEntry mapLiteratureToPublication(
             String accession, LiteratureDocument literatureDocument) {
-        LiteratureStoreEntry literatureEntry = entryStoreConverter.apply(literatureDocument);
-        literatureEntry
-                .getLiteratureMappedReferences()
-                .removeIf(mappedReference -> !isFromAccession(accession, mappedReference));
+        LiteratureEntry literatureEntry = entryStoreConverter.apply(literatureDocument);
+        //        literatureEntry
+        //                .getLiteratureMappedReferences()
+        //                .removeIf(mappedReference -> !isFromAccession(accession,
+        // mappedReference));
 
-        LiteratureMappedReference mappedReference =
-                literatureEntry.getLiteratureMappedReferences().get(0);
-        List<String> categories = new ArrayList<>();
-        if (mappedReference.hasSourceCategory()) {
-            categories =
-                    mappedReference.getSourceCategories().stream()
-                            .map(
-                                    category ->
-                                            Arrays.stream(PublicationCategory.values())
-                                                    .filter(
-                                                            a ->
-                                                                    a.name()
-                                                                            .equalsIgnoreCase(
-                                                                                    category))
-                                                    .map(PublicationCategory::getLabel)
-                                                    .findFirst()
-                                                    .orElse(""))
-                            .filter(Utils::notNullNotEmpty)
-                            .collect(Collectors.toList());
-            mappedReference.getSourceCategories().clear();
-        }
+        //        LiteratureMappedReference mappedReference =
+        //                literatureEntry.getLiteratureMappedReferences().get(0);
+        //        List<String> categories = new ArrayList<>();
+        //        if (mappedReference.hasSourceCategory()) {
+        //            categories =
+        //                    mappedReference.getSourceCategories().stream()
+        //                            .map(
+        //                                    category ->
+        //                                            Arrays.stream(PublicationCategory.values())
+        //                                                    .filter(
+        //                                                            a ->
+        //                                                                    a.name()
+        //
+        // .equalsIgnoreCase(
+        //
+        // category))
+        //                                                    .map(PublicationCategory::getLabel)
+        //                                                    .findFirst()
+        //                                                    .orElse(""))
+        //                            .filter(Utils::notNullNotEmpty)
+        //                            .collect(Collectors.toList());
+        //            mappedReference.getSourceCategories().clear();
+        //        }
         UniProtKBReference reference =
-                new UniProtKBReferenceBuilder()
-                        .citation(literatureEntry.getLiteratureEntry().getCitation())
-                        .build();
+                new UniProtKBReferenceBuilder().citation(literatureEntry.getCitation()).build();
 
         return PublicationEntry.builder()
                 .reference(reference)
-                .statistics(literatureEntry.getLiteratureEntry().getStatistics())
-                .literatureMappedReference(mappedReference)
+                .statistics(literatureEntry.getStatistics())
+                //                .literatureMappedReference(mappedReference)
                 .publicationSource(COMPUTATIONALLY_MAPPED)
-                .categories(categories)
+                //                .categories(categories)
                 .build();
     }
 

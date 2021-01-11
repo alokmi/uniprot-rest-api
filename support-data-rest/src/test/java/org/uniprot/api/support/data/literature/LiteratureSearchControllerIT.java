@@ -1,6 +1,14 @@
 package org.uniprot.api.support.data.literature;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -36,14 +44,14 @@ import org.uniprot.core.CrossReference;
 import org.uniprot.core.citation.Author;
 import org.uniprot.core.citation.CitationDatabase;
 import org.uniprot.core.citation.Literature;
-import org.uniprot.core.citation.impl.*;
+import org.uniprot.core.citation.impl.AuthorBuilder;
+import org.uniprot.core.citation.impl.LiteratureBuilder;
+import org.uniprot.core.citation.impl.PublicationDateBuilder;
 import org.uniprot.core.impl.CrossReferenceBuilder;
 import org.uniprot.core.json.parser.literature.LiteratureJsonConfig;
 import org.uniprot.core.literature.LiteratureEntry;
-import org.uniprot.core.literature.LiteratureStoreEntry;
 import org.uniprot.core.literature.impl.LiteratureEntryBuilder;
 import org.uniprot.core.literature.impl.LiteratureStatisticsBuilder;
-import org.uniprot.core.literature.impl.LiteratureStoreEntryBuilder;
 import org.uniprot.store.config.UniProtDataType;
 import org.uniprot.store.indexer.DataStoreManager;
 import org.uniprot.store.search.SolrCollection;
@@ -165,9 +173,6 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                         .statistics(new LiteratureStatisticsBuilder().build())
                         .build();
 
-        LiteratureStoreEntry storeEntry =
-                new LiteratureStoreEntryBuilder().literatureEntry(entry).build();
-
         LiteratureDocument document =
                 LiteratureDocument.builder()
                         .id(String.valueOf(pubMedId))
@@ -179,16 +184,15 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                                         .collect(Collectors.toSet()))
                         .journal(literature.getJournal().getName())
                         .published(literature.getPublicationDate().getValue())
-                        .citedin(facet)
-                        .mappedin(facet)
-                        .content(Collections.singleton(String.valueOf(pubMedId)))
-                        .literatureObj(getLiteratureBinary(storeEntry))
+                        .isUniprotkbMapped(facet)
+                        .isComputationalMapped(facet)
+                        .literatureObj(getLiteratureBinary(entry))
                         .build();
 
         getStoreManager().saveDocs(DataStoreManager.StoreType.LITERATURE, document);
     }
 
-    private ByteBuffer getLiteratureBinary(LiteratureStoreEntry entry) {
+    private ByteBuffer getLiteratureBinary(LiteratureEntry entry) {
         try {
             return ByteBuffer.wrap(
                     LiteratureJsonConfig.getInstance()

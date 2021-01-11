@@ -1,8 +1,17 @@
 package org.uniprot.api.uniprotkb.service;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -26,17 +35,12 @@ import org.uniprot.api.uniprotkb.repository.search.impl.PublicationSolrQueryConf
 import org.uniprot.core.citation.Citation;
 import org.uniprot.core.citation.Literature;
 import org.uniprot.core.literature.LiteratureEntry;
-import org.uniprot.core.literature.LiteratureStoreEntry;
 import org.uniprot.core.util.Utils;
 import org.uniprot.store.config.UniProtDataType;
 import org.uniprot.store.config.searchfield.factory.SearchFieldConfigFactory;
 import org.uniprot.store.config.searchfield.model.SearchFieldItem;
 import org.uniprot.store.search.document.literature.LiteratureDocument;
 import org.uniprot.store.search.document.publication.PublicationDocument;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created 06/01/2021
@@ -136,7 +140,6 @@ public class PublicationService2
         SolrRequest solrRequest1 = getSolrRequest(pubmedIdsSolrRequest.build().toString());
         Stream<LiteratureDocument> all = literatureRepository.getAll(solrRequest1);
         return all.map(literatureEntryStoreConverter)
-                .map(LiteratureStoreEntry::getLiteratureEntry)
                 .collect(
                         Collectors.toMap(this::getPubmedIdFromEntry, LiteratureEntry::getCitation));
     }
