@@ -51,8 +51,7 @@ class PublicationServiceTest {
                 .thenAnswer(invocation -> Stream.of(docForUninprotEntry200));
 
         PublicationService service =
-                new PublicationService(
-                        storeClient, repository, new LiteratureStoreEntryConverter());
+                new PublicationService(storeClient, repository, new LiteratureEntryConverter());
         service.defaultPageSize = DEFAULT_PAGE_SIZE;
         PublicationRequest request = new PublicationRequest();
         QueryResult<PublicationEntry> result =
@@ -98,8 +97,7 @@ class PublicationServiceTest {
                 .thenAnswer(invocation -> Stream.of(docForMappedAccession));
 
         PublicationService service =
-                new PublicationService(
-                        storeClient, repository, new LiteratureStoreEntryConverter());
+                new PublicationService(storeClient, repository, new LiteratureEntryConverter());
         service.defaultPageSize = DEFAULT_PAGE_SIZE;
         PublicationRequest request = new PublicationRequest();
         QueryResult<PublicationEntry> result =
@@ -141,8 +139,7 @@ class PublicationServiceTest {
                 .thenAnswer(invocation -> Stream.of(docForMappedAccession));
 
         PublicationService service =
-                new PublicationService(
-                        storeClient, repository, new LiteratureStoreEntryConverter());
+                new PublicationService(storeClient, repository, new LiteratureEntryConverter());
         service.defaultPageSize = DEFAULT_PAGE_SIZE;
         PublicationRequest request = new PublicationRequest();
         request.setFacets("category,source,study_type");
@@ -171,8 +168,7 @@ class PublicationServiceTest {
         LiteratureRepository repository = getMockedPaginationRepository();
 
         PublicationService service =
-                new PublicationService(
-                        storeClient, repository, new LiteratureStoreEntryConverter());
+                new PublicationService(storeClient, repository, new LiteratureEntryConverter());
         service.defaultPageSize = DEFAULT_PAGE_SIZE;
         PublicationRequest request = new PublicationRequest();
         request.setFacets("category,source,study_type");
@@ -209,8 +205,7 @@ class PublicationServiceTest {
         LiteratureRepository repository = getMockedPaginationRepository();
 
         PublicationService service =
-                new PublicationService(
-                        storeClient, repository, new LiteratureStoreEntryConverter());
+                new PublicationService(storeClient, repository, new LiteratureEntryConverter());
         service.defaultPageSize = DEFAULT_PAGE_SIZE;
         PublicationRequest request = new PublicationRequest();
         request.setFacets("category,source,study_type");
@@ -247,8 +242,7 @@ class PublicationServiceTest {
         LiteratureRepository repository = getMockedPaginationRepository();
 
         PublicationService service =
-                new PublicationService(
-                        storeClient, repository, new LiteratureStoreEntryConverter());
+                new PublicationService(storeClient, repository, new LiteratureEntryConverter());
         service.defaultPageSize = DEFAULT_PAGE_SIZE;
         PublicationRequest request = new PublicationRequest();
         request.setFacets("category,source,study_type");

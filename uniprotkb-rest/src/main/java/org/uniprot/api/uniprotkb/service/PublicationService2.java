@@ -56,7 +56,7 @@ public class PublicationService2
     private final LiteratureRepository literatureRepository;
     private final PublicationConverter publicationConverter;
     private final QueryProcessor publicationQueryProcessor;
-    private final LiteratureStoreEntryConverter literatureEntryStoreConverter;
+    private final LiteratureEntryConverter literatureEntryStoreConverter;
     private final String idFieldName;
     private final String accessionFieldName;
 
@@ -65,7 +65,7 @@ public class PublicationService2
             LiteratureRepository literatureRepository,
             PublicationConverter publicationConverter,
             UniProtKBPublicationsSolrSortClause solrSortClause,
-            LiteratureStoreEntryConverter literatureEntryStoreConverter,
+            LiteratureEntryConverter literatureEntryStoreConverter,
             @Qualifier("publicationQueryConfig") SolrQueryConfig publicationSolrQueryConf,
             PublicationFacetConfig2 facetConfig,
             QueryProcessor publicationQueryProcessor) {

@@ -50,7 +50,7 @@ public class PublicationService {
     private static final String COMPUTATIONALLY_MAPPED = "Computationally mapped";
     private final UniProtKBStoreClient uniProtKBStore;
     private final LiteratureRepository repository;
-    private final LiteratureStoreEntryConverter entryStoreConverter;
+    private final LiteratureEntryConverter entryStoreConverter;
     private final SearchFieldConfig searchFieldConfig;
 
     @Value("${search.default.page.size:#{null}}")
@@ -59,7 +59,7 @@ public class PublicationService {
     public PublicationService(
             UniProtKBStoreClient entryStore,
             LiteratureRepository repository,
-            LiteratureStoreEntryConverter entryStoreConverter) {
+            LiteratureEntryConverter entryStoreConverter) {
         this.uniProtKBStore = entryStore;
         this.repository = repository;
         this.entryStoreConverter = entryStoreConverter;
