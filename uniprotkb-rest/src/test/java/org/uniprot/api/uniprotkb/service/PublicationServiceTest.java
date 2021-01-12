@@ -51,7 +51,7 @@ class PublicationServiceTest {
     @MockBean private PublicationRepository publicationRepository;
     @MockBean private LiteratureRepository literatureRepository;
     @MockBean private PublicationConverter publicationConverter;
-    @MockBean private LiteratureStoreEntryConverter literatureStoreEntryConverter;
+    @MockBean private LiteratureEntryConverter literatureEntryConverter;
     @MockBean private UniProtKBPublicationsSolrSortClause solrSortClause;
     @MockBean private PublicationFacetConfig publicationFacetConfig;
 
@@ -95,7 +95,7 @@ class PublicationServiceTest {
                         literatureRepository,
                         new PublicationConverter(),
                         solrSortClause,
-                        new LiteratureStoreEntryConverter(),
+                        new LiteratureEntryConverter(),
                         solrQueryConfig.publicationSolrQueryConf(),
                         publicationFacetConfig,
                         solrQueryConfig.publicationQueryProcessor());
