@@ -1,12 +1,22 @@
 package org.uniprot.api.support.data.literature;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.text.IsEmptyString.emptyOrNullString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -36,14 +46,14 @@ import org.uniprot.core.CrossReference;
 import org.uniprot.core.citation.Author;
 import org.uniprot.core.citation.CitationDatabase;
 import org.uniprot.core.citation.Literature;
-import org.uniprot.core.citation.impl.*;
+import org.uniprot.core.citation.impl.AuthorBuilder;
+import org.uniprot.core.citation.impl.LiteratureBuilder;
+import org.uniprot.core.citation.impl.PublicationDateBuilder;
 import org.uniprot.core.impl.CrossReferenceBuilder;
 import org.uniprot.core.json.parser.literature.LiteratureJsonConfig;
 import org.uniprot.core.literature.LiteratureEntry;
-import org.uniprot.core.literature.LiteratureStoreEntry;
 import org.uniprot.core.literature.impl.LiteratureEntryBuilder;
 import org.uniprot.core.literature.impl.LiteratureStatisticsBuilder;
-import org.uniprot.core.literature.impl.LiteratureStoreEntryBuilder;
 import org.uniprot.store.config.UniProtDataType;
 import org.uniprot.store.indexer.DataStoreManager;
 import org.uniprot.store.search.SolrCollection;
@@ -165,30 +175,29 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                         .statistics(new LiteratureStatisticsBuilder().build())
                         .build();
 
-        LiteratureStoreEntry storeEntry =
-                new LiteratureStoreEntryBuilder().literatureEntry(entry).build();
-
         LiteratureDocument document =
                 LiteratureDocument.builder()
                         .id(String.valueOf(pubMedId))
                         .doi(literature.getDoiId())
                         .title(literature.getTitle())
+                        .authorGroups(new HashSet<>(literature.getAuthoringGroups()))
+                        .litAbstract(literature.getLiteratureAbstract())
                         .author(
                                 literature.getAuthors().stream()
                                         .map(Author::getValue)
                                         .collect(Collectors.toSet()))
                         .journal(literature.getJournal().getName())
                         .published(literature.getPublicationDate().getValue())
-                        .citedin(facet)
-                        .mappedin(facet)
-                        .content(Collections.singleton(String.valueOf(pubMedId)))
-                        .literatureObj(getLiteratureBinary(storeEntry))
+                        .isUniprotkbMapped(facet)
+                        .isComputationalMapped(facet)
+                        .isCommunityMapped(facet)
+                        .literatureObj(getLiteratureBinary(entry))
                         .build();
 
         getStoreManager().saveDocs(DataStoreManager.StoreType.LITERATURE, document);
     }
 
-    private ByteBuffer getLiteratureBinary(LiteratureStoreEntry entry) {
+    private ByteBuffer getLiteratureBinary(LiteratureEntry entry) {
         try {
             return ByteBuffer.wrap(
                     LiteratureJsonConfig.getInstance()
@@ -261,15 +270,16 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                     .queryParam(
                             "query",
                             Collections.singletonList(
-                                    "id:INVALID OR citedin:INVALID OR mappedin:INVALID"))
-                    .resultMatcher(jsonPath("$.url", not(isEmptyOrNullString())))
+                                    "id:INVALID OR is_uniprotkb_mapped:INVALID OR is_computational_mapped:INVALID OR is_community_mapped:INVALID"))
+                    .resultMatcher(jsonPath("$.url", not(is(emptyOrNullString()) )))
                     .resultMatcher(
                             jsonPath(
                                     "$.messages.*",
                                     containsInAnyOrder(
                                             "The PubMed id value should be a number",
-                                            "The literature mappedin filter value should be a boolean",
-                                            "The literature citedin filter value should be a boolean")))
+                                            "The literature is_uniprotkb_mapped filter value should be a boolean",
+                                            "The literature is_community_mapped filter value should be a boolean",
+                                            "The literature is_computational_mapped filter value should be a boolean")))
                     .build();
         }
 
@@ -309,7 +319,10 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
         protected SearchParameter searchFacetsWithCorrectValuesReturnSuccessParameter() {
             return SearchParameter.builder()
                     .queryParam("query", Collections.singletonList("*:*"))
-                    .queryParam("facets", Collections.singletonList("citedin,mappedin"))
+                    .queryParam(
+                            "facets",
+                            Collections.singletonList(
+                                    "is_uniprotkb_mapped,is_computational_mapped,is_community_mapped"))
                     .resultMatcher(
                             jsonPath(
                                     "$.results.*.citation.citationCrossReferences[0].id",
@@ -319,7 +332,10 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                                     "$.results.*.citation.title", contains("title 10", "title 20")))
                     .resultMatcher(jsonPath("$.facets", notNullValue()))
                     .resultMatcher(jsonPath("$.facets", not(empty())))
-                    .resultMatcher(jsonPath("$.facets.*.name", contains("citedin", "mappedin")))
+                    .resultMatcher(
+                            jsonPath(
+                                    "$.facets.*.name",
+                                    contains("is_uniprotkb_mapped", "is_computational_mapped", "is_community_mapped")))
                     .build();
         }
     }
