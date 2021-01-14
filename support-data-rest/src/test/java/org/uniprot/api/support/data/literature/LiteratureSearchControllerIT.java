@@ -271,7 +271,7 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                             "query",
                             Collections.singletonList(
                                     "id:INVALID OR is_uniprotkb_mapped:INVALID OR is_computational_mapped:INVALID OR is_community_mapped:INVALID"))
-                    .resultMatcher(jsonPath("$.url", not(is(emptyOrNullString()) )))
+                    .resultMatcher(jsonPath("$.url", not(is(emptyOrNullString()))))
                     .resultMatcher(
                             jsonPath(
                                     "$.messages.*",
@@ -335,7 +335,10 @@ public class LiteratureSearchControllerIT extends AbstractSearchWithFacetControl
                     .resultMatcher(
                             jsonPath(
                                     "$.facets.*.name",
-                                    contains("is_uniprotkb_mapped", "is_computational_mapped", "is_community_mapped")))
+                                    contains(
+                                            "is_uniprotkb_mapped",
+                                            "is_computational_mapped",
+                                            "is_community_mapped")))
                     .build();
         }
     }
