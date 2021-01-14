@@ -1,9 +1,4 @@
-package org.uniprot.api.support.data.literature.service;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.uniprot.api.rest.service.query.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,11 +7,15 @@ import org.uniprot.api.common.repository.search.SolrQueryConfigFileReader;
 import org.uniprot.api.rest.service.query.QueryProcessor;
 import org.uniprot.api.rest.service.query.UniProtQueryProcessor;
 import org.uniprot.api.rest.service.query.processor.UniProtQueryProcessorConfig;
-import org.uniprot.api.rest.validation.config.WhitelistFieldConfig;
 import org.uniprot.store.config.UniProtDataType;
 import org.uniprot.store.config.searchfield.common.SearchFieldConfig;
 import org.uniprot.store.config.searchfield.factory.SearchFieldConfigFactory;
 import org.uniprot.store.config.searchfield.model.SearchFieldItem;
+
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.emptyMap;
 
 @Configuration
 public class LiteratureSolrQueryConfig {
@@ -33,27 +32,18 @@ public class LiteratureSolrQueryConfig {
     }
 
     @Bean
-    public QueryProcessor literatureQueryProcessor(
-            WhitelistFieldConfig whiteListFieldConfig,
-            SearchFieldConfig literatureSearchFieldConfig) {
-        Map<String, String> literatureWhiteListFields =
-                whiteListFieldConfig
-                        .getField()
-                        .getOrDefault(
-                                UniProtDataType.LITERATURE.toString().toLowerCase(),
-                                new HashMap<>());
+    public QueryProcessor literatureQueryProcessor(SearchFieldConfig literatureSearchFieldConfig) {
         return UniProtQueryProcessor.newInstance(
                 UniProtQueryProcessorConfig.builder()
                         .optimisableFields(
                                 getDefaultSearchOptimisedFieldItems(literatureSearchFieldConfig))
-                        .whiteListFields(literatureWhiteListFields)
+                        .whiteListFields(emptyMap())
                         .build());
     }
 
     private List<SearchFieldItem> getDefaultSearchOptimisedFieldItems(
             SearchFieldConfig literatureSearchFieldConfig) {
         return Collections.singletonList(
-                literatureSearchFieldConfig.getSearchFieldItemByName(
-                        LiteratureService.LITERATURE_ID_FIELD));
+                literatureSearchFieldConfig.getSearchFieldItemByName("id"));
     }
 }
