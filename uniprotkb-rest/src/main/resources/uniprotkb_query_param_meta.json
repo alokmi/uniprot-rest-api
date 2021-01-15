@@ -1258,5 +1258,13 @@
   {
     "name": "proteins_with",
     "type": "String"
+  },
+  {
+    "name": "community_pubmed_id",
+    "type": "String"
+  },
+  {
+    "name": "computational_pubmed_id",
+    "type": "String"
   }
 ]
