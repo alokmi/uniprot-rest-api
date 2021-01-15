@@ -784,6 +784,8 @@ class UniProtKBSearchControllerIT extends AbstractSearchWithFacetControllerIT {
             doc.seqCautionMisc.add("Search All");
             doc.seqCautionMiscEv.add("Search All");
             doc.proteomes.add("UP000000000");
+            doc.computationalPubmedIds.add("890123456");
+            doc.communityPubmedIds.add("1234567");
             UniProtDatabaseTypes.INSTANCE
                     .getAllDbTypes()
                     .forEach(

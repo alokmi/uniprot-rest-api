@@ -1260,11 +1260,11 @@
     "type": "String"
   },
   {
-    "name": "community_pubmed_id",
+    "name": "computational_pubmed_id",
     "type": "String"
   },
   {
-    "name": "computational_pubmed_id",
+    "name": "community_pubmed_id",
     "type": "String"
   }
 ]
